@@ -9,7 +9,6 @@
 // except according to those terms.
 
 #![crate_name = "rustc_save_analysis"]
-#![unstable(feature = "rustc_private", issue = "27812")]
 #![crate_type = "dylib"]
 #![crate_type = "rlib"]
 #![doc(html_logo_url = "https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png",
@@ -19,8 +18,10 @@
 
 #![feature(custom_attribute)]
 #![allow(unused_attributes)]
-#![feature(rustc_private)]
-#![feature(staged_api)]
+
+#![cfg_attr(stage0, unstable(feature = "rustc_private", issue = "27812"))]
+#![cfg_attr(stage0, feature(rustc_private))]
+#![cfg_attr(stage0, feature(staged_api))]
 
 #[macro_use] extern crate rustc;
 
@@ -257,7 +258,7 @@ impl<'l, 'tcx: 'l> SaveContext<'l, 'tcx> {
                     items: m.items.iter().map(|i| i.id).collect(),
                     visibility: From::from(&item.vis),
                     docs: docs_for_attrs(&item.attrs),
-                    sig: self.sig_base(item),
+                    sig: Some(self.sig_base(item)),
                     attributes: item.attrs.clone(),
                 }))
             }
